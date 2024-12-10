@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environmental Sensor Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            width: 100%;
+            text-align: center;
+            background-color: #4CAF50;
+            padding: 20px;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .login-box {
+            width: 300px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .login-box input {
+            width: calc(100% - 20px);
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .login-box button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .sensor-dashboard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            justify-items: center;
+            margin-top: 20px;
+        }
+
+        .sensor-box {
+            width: 250px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .sensor-box img {
+            width: 100px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .sensor-box h3 {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .sensor-box p {
+            font-size: 16px;
+            color: #333;
+        }
+
+        #logout-button {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 10px 20px;
+            background-color: #ff4d4d;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header Section -->
+    <div class="header">
+        HỆ THỐNG GIÁM SÁT CHẤT LƯỢNG MÔI TRƯỜNG
+    </div>
+
+    <div class="login-box" id="login-box">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+    </div>
+
+    <button id="logout-button" onclick="logout()">Logout</button>
+
+    <div id="sensor-dashboard" class="sensor-dashboard" style="display: none;">
+        <div class="sensor-box" id="temperature">
+            <img src="temperature-icon.png" alt="Temperature">
+            <h3>Temperature</h3>
+            <p id="temp-value">-- °C</p>
+        </div>
+
+        <div class="sensor-box" id="humidity">
+            <img src="humidity-icon.png" alt="Humidity">
+            <h3>Humidity</h3>
+            <p id="humidity-value">-- %</p>
+        </div>
+
+        <div class="sensor-box" id="uv-index">
+            <img src="uv-icon.png" alt="UV Index">
+            <h3>UV Index</h3>
+            <p id="uv-value">--</p>
+        </div>
+
+        <div class="sensor-box" id="co2">
+            <img src="co2-icon.png" alt="CO2 Concentration">
+            <h3>CO2 Concentration</h3>
+            <p id="co2-value">-- ppm</p>
+        </div>
+
+        <div class="sensor-box" id="so2">
+            <img src="so2-icon.png" alt="SO2 Concentration">
+            <h3>SO2 Concentration</h3>
+            <p id="so2-value">-- ppm</p>
+        </div>
+
+        <div class="sensor-box" id="pm25">
+            <img src="pm25-icon.png" alt="PM2.5 Concentration">
+            <h3>PM2.5 Concentration</h3>
+            <p id="pm25-value">-- µg/m³</p>
+        </div>
+    </div>
+
+    <script>
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === 'admin' && password === 'admin') {
+                document.getElementById('login-box').style.display = 'none';
+                document.getElementById('sensor-dashboard').style.display = 'grid';
+                document.getElementById('logout-button').style.display = 'block';
+            } else {
+                alert('Invalid credentials!');
+            }
+        }
+
+        function logout() {
+            document.getElementById('login-box').style.display = 'block';
+            document.getElementById('sensor-dashboard').style.display = 'none';
+            document.getElementById('logout-button').style.display = 'none';
+        }
+
+        async function fetchSensorData() {
+            try {
+                const response = await fetch('http://your-esp32-ip/sensor-data');
+                const data = await response.json();
+
+                document.getElementById('temp-value').innerText = `${data.temperature} °C`;
+                document.getElementById('humidity-value').innerText = `${data.humidity} %`;
+                document.getElementById('uv-value').innerText = data.uvIndex;
+                document.getElementById('co2-value').innerText = `${data.co2} ppm`;
+                document.getElementById('so2-value').innerText = `${data.so2} ppm`;
+                document.getElementById('pm25-value').innerText = `${data.pm25} µg/m³`;
+            } catch (error) {
+                console.error('Failed to fetch sensor data:', error);
+            }
+        }
+
+        setInterval(fetchSensorData, 5000); // Refresh every 5 seconds
+        fetchSensorData(); // Initial fetch
+    </script>
+</body>
+
+</html>

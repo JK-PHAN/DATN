@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Open test.html in Cốc Cốc",
+            "file": "e:\\bv\\v1.html",
+            "runtimeExecutable": "C:/Program Files/CocCoc/Browser/Application/browser.exe" // Đường dẫn đến Cốc Cốc
+        }
+    ]
+}
