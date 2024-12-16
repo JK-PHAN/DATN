@@ -4,108 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
     <title>Environmental Sensor Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
 
-        .header {
-            width: 100%;
-            text-align: center;
-            background-color: #4CAF50;
-            padding: 20px;
-            color: white;
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .login-box {
-            width: 300px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .login-box input {
-            width: calc(100% - 20px);
-            margin: 10px 0;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        .login-box button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .sensor-dashboard {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            justify-items: center;
-            margin-top: 20px;
-        }
-
-        .sensor-box {
-            width: 250px;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .sensor-box img {
-            width: 100px;
-            height: auto;
-            margin-bottom: 10px;
-        }
-
-        .sensor-box h3 {
-            font-size: 18px;
-            margin: 10px 0;
-        }
-
-        .sensor-box p {
-            font-size: 16px;
-            color: #333;
-        }
-
-        #logout-button {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            padding: 10px 20px;
-            background-color: #ff4d4d;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            display: none;
-        }
-    </style>
 </head>
 
 <body>
 
     <!-- Header Section -->
     <div class="header">
-        HỆ THỐNG GIÁM SÁT CHẤT LƯỢNG MÔI TRƯỜNG
+        ENVIRONMENTAL QUALITY MONITORING SYSTEM
     </div>
 
     <div class="login-box" id="login-box">
@@ -149,9 +57,21 @@
         </div>
 
         <div class="sensor-box" id="pm25">
+            <img src="pm1-icon.png" alt="PM1.0 Concentration">
+            <h3>PM1.0 Concentration</h3>
+            <p id="pm1-value">-- µg/m³</p>
+        </div>
+
+        <div class="sensor-box" id="pm25">
             <img src="pm25-icon.png" alt="PM2.5 Concentration">
             <h3>PM2.5 Concentration</h3>
             <p id="pm25-value">-- µg/m³</p>
+        </div>
+
+        <div class="sensor-box" id="pm25">
+            <img src="pm10-icon.png" alt="PM10 Concentration">
+            <h3>PM10 Concentration</h3>
+            <p id="pm10-value">-- µg/m³</p>
         </div>
     </div>
 
@@ -185,7 +105,9 @@
                 document.getElementById('uv-value').innerText = data.uvIndex;
                 document.getElementById('co2-value').innerText = `${data.co2} ppm`;
                 document.getElementById('so2-value').innerText = `${data.so2} ppm`;
-                document.getElementById('pm25-value').innerText = `${data.pm25} µg/m³`;
+                document.getElementById('pm1-value').innerText = `${data.pm1} µg/m³`;
+                document.getElementById('pm25-value').innerText = `${data.pm2_5} µg/m³`;
+                document.getElementById('pm10-value').innerText = `${data.pm10} µg/m³`;
             } catch (error) {
                 console.error('Failed to fetch sensor data:', error);
             }
