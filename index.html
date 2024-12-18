@@ -4,13 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles1.css">
     <title>Environmental Sensor Dashboard</title>
-
 </head>
 
 <body>
-
     <!-- Header Section -->
     <div class="header">
         ENVIRONMENTAL QUALITY MONITORING SYSTEM
@@ -23,59 +21,68 @@
         <button onclick="login()">Login</button>
     </div>
 
-    <button id="logout-button" onclick="logout()">Logout</button>
+    <button id="logout-button" onclick="logout()" style="display: none;">Logout</button>
 
     <div id="sensor-dashboard" class="sensor-dashboard" style="display: none;">
-        <div class="sensor-box" id="temperature">
-            <img src="temperature-icon.png" alt="Temperature">
+        <div class="sensor-box">
+            <img src="E:\DATN\html\test\image\uv-icon.png" alt="uvValue">
+            <h3>UV Value</h3>
+            <p id="uvValueDisplay">-- mW/m²</p>
+        </div>
+
+        <div class="sensor-box">
+            <img src="E:\DATN\html\test\image\temperature-icon.png" alt="Temperature">
             <h3>Temperature</h3>
-            <p id="temp-value">-- °C</p>
+            <p id="temperatureDisplay">-- °C</p>
         </div>
 
-        <div class="sensor-box" id="humidity">
-            <img src="humidity-icon.png" alt="Humidity">
+        <div class="sensor-box">
+            <img src="E:\DATN\html\test\image\humidity-icon.png" alt="Humidity">
             <h3>Humidity</h3>
-            <p id="humidity-value">-- %</p>
-        </div>
-
-        <div class="sensor-box" id="uv-index">
-            <img src="uv-icon.png" alt="UV Index">
-            <h3>UV Index</h3>
-            <p id="uv-value">--</p>
-        </div>
-
-        <div class="sensor-box" id="co2">
-            <img src="co2-icon.png" alt="CO2 Concentration">
-            <h3>CO2 Concentration</h3>
-            <p id="co2-value">-- ppm</p>
-        </div>
-
-        <div class="sensor-box" id="so2">
-            <img src="so2-icon.png" alt="SO2 Concentration">
-            <h3>SO2 Concentration</h3>
-            <p id="so2-value">-- ppm</p>
-        </div>
-
-        <div class="sensor-box" id="pm25">
-            <img src="pm1-icon.png" alt="PM1.0 Concentration">
-            <h3>PM1.0 Concentration</h3>
-            <p id="pm1-value">-- µg/m³</p>
-        </div>
-
-        <div class="sensor-box" id="pm25">
-            <img src="pm25-icon.png" alt="PM2.5 Concentration">
-            <h3>PM2.5 Concentration</h3>
-            <p id="pm25-value">-- µg/m³</p>
-        </div>
-
-        <div class="sensor-box" id="pm25">
-            <img src="pm10-icon.png" alt="PM10 Concentration">
-            <h3>PM10 Concentration</h3>
-            <p id="pm10-value">-- µg/m³</p>
+            <p id="humidityDisplay">-- %</p>
         </div>
     </div>
 
     <script>
+        var ws;
+        function init() {
+            ws = new WebSocket('ws://172.17.13.93:81/'); // Thay địa chỉ IP bằng địa chỉ IP của ESP32
+            ws.onopen = function () {
+                console.log("Connected to WebSocket");
+            };
+            ws.onmessage = function (event) {
+                const data = event.data; // Nhận dữ liệu
+                const parsedData = parseData(data); // Phân tích cú pháp dữ liệu
+                if (parsedData) {
+                    document.getElementById("uvValueDisplay").innerText = "UV Value: " + parsedData.uv + " mW/m²";
+                    document.getElementById("temperatureDisplay").innerText = "Temperature: " + parsedData.temperature + " °C";
+                    document.getElementById("humidityDisplay").innerText = "Humidity: " + parsedData.humidity + " %";
+                }
+            };
+            ws.onclose = function () {
+                console.log("Disconnected from WebSocket");
+            };
+        }
+        window.onload = init;
+
+        function parseData(data) {
+            // Tách giá trị UV, nhiệt độ và độ ẩm từ chuỗi
+            const uvMatch = data.match(/UV:\s*([\d.]+)/);
+            const tempMatch = data.match(/Temperature:\s*([\d.]+)/);
+            const humidityMatch = data.match(/Humidity:\s*([\d.]+)/);
+
+            if (uvMatch && tempMatch && humidityMatch) {
+                return {
+                    uv: uvMatch[1],
+                    temperature: tempMatch[1],
+                    humidity: humidityMatch[1]
+                };
+            } else {
+                console.error("Invalid data format: " + data);
+                return null;
+            }
+        }
+
         function login() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
@@ -94,28 +101,8 @@
             document.getElementById('sensor-dashboard').style.display = 'none';
             document.getElementById('logout-button').style.display = 'none';
         }
-
-        async function fetchSensorData() {
-            try {
-                const response = await fetch('http://your-esp32-ip/sensor-data');
-                const data = await response.json();
-
-                document.getElementById('temp-value').innerText = `${data.temperature} °C`;
-                document.getElementById('humidity-value').innerText = `${data.humidity} %`;
-                document.getElementById('uv-value').innerText = data.uvIndex;
-                document.getElementById('co2-value').innerText = `${data.co2} ppm`;
-                document.getElementById('so2-value').innerText = `${data.so2} ppm`;
-                document.getElementById('pm1-value').innerText = `${data.pm1} µg/m³`;
-                document.getElementById('pm25-value').innerText = `${data.pm2_5} µg/m³`;
-                document.getElementById('pm10-value').innerText = `${data.pm10} µg/m³`;
-            } catch (error) {
-                console.error('Failed to fetch sensor data:', error);
-            }
-        }
-
-        setInterval(fetchSensorData, 5000); // Refresh every 5 seconds
-        fetchSensorData(); // Initial fetch
     </script>
+
 </body>
 
 </html>
