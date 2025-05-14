@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3001; // Sử dụng cổng từ biến môi tr
 
 // Kích hoạt CORS cho các domain cụ thể
 app.use(cors({
-    origin: ['https://datn-sigma-amber.vercel.app/', 'https://your-service.onrender.com'], // Thay bằng domain của bạn
+    origin: ['https://datn-sigma-amber.vercel.app', 'https://your-service.onrender.com'], // Thay bằng domain của bạn
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type']
 }));
