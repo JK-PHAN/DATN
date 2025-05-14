@@ -4,13 +4,13 @@ const cors = require('cors'); // Thêm thư viện CORS
 const path = require('path'); // Thêm thư viện path
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001; // Sử dụng cổng từ biến môi trường hoặc mặc định là 3001
 
-// Kích hoạt CORS cho tất cả các nguồn
+// Kích hoạt CORS cho các domain cụ thể
 app.use(cors({
-    origin: '*', // Cho phép tất cả các nguồn
-    methods: ['GET', 'POST'], // Chỉ cho phép các phương thức GET và POST
-    allowedHeaders: ['Content-Type'] // Chỉ cho phép header Content-Type
+    origin: ['https://your-vercel-domain.vercel.app', 'https://your-service.onrender.com'], // Thay bằng domain của bạn
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type']
 }));
 
 app.use(bodyParser.json());
@@ -33,7 +33,12 @@ app.get('/data', (req, res) => {
     res.json(sensorData); // Trả dữ liệu cảm biến
 });
 
+// Endpoint kiểm tra trạng thái server
+app.get('/health', (req, res) => {
+    res.status(200).send('Server is healthy!');
+});
+
 // Khởi động server
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });
