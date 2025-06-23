@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>ESENSOR DATA AT STATIONS</title>
+  <title>SENSOR DATA AT STATIONS</title>
   <link rel="stylesheet" href="style1.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -74,7 +74,7 @@
       </div>
 
       <!-- Nút tải dữ liệu -->
-      <button onclick="downloadExcel()">download_data</button>
+      <button onclick="downloadExcel()">Download_Data</button>
     </div>
 
     <!-- Phần bên phải -->
@@ -93,141 +93,138 @@
     </div>
   </div>
 
-  <script>
-    // Lưu trữ dữ liệu để xuất ra Excel
-    var dataLog = [];
+<script>
+  // Lưu trữ dữ liệu để xuất ra Excel
+  var dataLog = [];
 
-    // Dữ liệu cho biểu đồ
-    var outdoorData = {
-      labels: [], // Thời gian
-      datasets: [
-        { label: "Nhiệt độ (°C)", data: [], borderColor: "red", fill: false },
-        { label: "PM1 (µg/m³)", data: [], borderColor: "blue", fill: false },
-        { label: "PM2.5 (µg/m³)", data: [], borderColor: "green", fill: false },
-        { label: "PM10 (µg/m³)", data: [], borderColor: "purple", fill: false }
-      ]
-    };
+  // Dữ liệu cho biểu đồ
+  var outdoorData = {
+    labels: [],
+    datasets: [
+      { label: "Nhiệt độ (°C)", data: [], borderColor: "red", fill: false },
+      { label: "PM1 (µg/m³)", data: [], borderColor: "blue", fill: false },
+      { label: "PM2.5 (µg/m³)", data: [], borderColor: "green", fill: false },
+      { label: "PM10 (µg/m³)", data: [], borderColor: "purple", fill: false }
+    ]
+  };
 
-    var indoorData = {
-      labels: [], // Thời gian
-      datasets: [
-        { label: "Nhiệt độ (°C)", data: [], borderColor: "orange", fill: false },
-        { label: "Độ ẩm (%)", data: [], borderColor: "cyan", fill: false },
-        { label: "UV", data: [], borderColor: "pink", fill: false }
-      ]
-    };
+  var indoorData = {
+    labels: [],
+    datasets: [
+      { label: "Nhiệt độ (°C)", data: [], borderColor: "orange", fill: false },
+      { label: "Độ ẩm (%)", data: [], borderColor: "cyan", fill: false },
+      { label: "UV", data: [], borderColor: "pink", fill: false }
+    ]
+  };
 
-    // Tạo biểu đồ Outdoor
-    var ctxOutdoor = document.getElementById("chartOutdoor").getContext("2d");
-    var chartOutdoor = new Chart(ctxOutdoor, {
-      type: "line",
-      data: outdoorData,
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          x: {
-            type: "category",
-            ticks: {
-              autoSkip: false
-            }
-          },
-          y: {
-            min: 0,
-            max: 100,
-            ticks: {
-              stepSize: 10
-            }
-          }
+  // Tạo biểu đồ Outdoor
+  var ctxOutdoor = document.getElementById("chartOutdoor").getContext("2d");
+  var chartOutdoor = new Chart(ctxOutdoor, {
+    type: "line",
+    data: outdoorData,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          type: "category",
+          ticks: { autoSkip: false }
+        },
+        y: {
+          min: 0,
+          max: 100,
+          ticks: { stepSize: 10 }
         }
-      }
-    });
-
-    // Tạo biểu đồ Indoor
-    var ctxIndoor = document.getElementById("chartIndoor").getContext("2d");
-    var chartIndoor = new Chart(ctxIndoor, {
-      type: "line",
-      data: indoorData,
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          x: {
-            type: "category",
-            ticks: {
-              autoSkip: false
-            }
-          },
-          y: {
-            min: 0,
-            max: 100,
-            ticks: {
-              stepSize: 10
-            }
-          }
-        }
-      }
-    });
-
-    // Hàm lấy dữ liệu từ server qua HTTP
-    async function fetchData() {
-      try {
-        const response = await fetch("https://datn-8k1d.onrender.com/data"); // Thay bằng địa chỉ server của bạn
-        const data = await response.json();
-        const timestamp = new Date().toLocaleTimeString();
-
-        if (data.ID === "ID1") {
-          document.getElementById("temp1").innerText = data.Temperature;
-          document.getElementById("pm1").innerText = data.PM1;
-          document.getElementById("pm2_5").innerText = data["PM2.5"];
-          document.getElementById("pm10").innerText = data.PM10;
-
-          // Cập nhật biểu đồ Outdoor
-          outdoorData.labels.push(timestamp);
-          outdoorData.datasets[0].data.push(data.Temperature);
-          outdoorData.datasets[1].data.push(data.PM1);
-          outdoorData.datasets[2].data.push(data["PM2.5"]);
-          outdoorData.datasets[3].data.push(data.PM10);
-          chartOutdoor.update();
-        } else if (data.ID === "ID2") {
-          document.getElementById("temp2").innerText = data.Temperature;
-          document.getElementById("hum2").innerText = data.Humidity;
-          document.getElementById("uv").innerText = data.UV;
-
-          // Cập nhật biểu đồ Indoor
-          indoorData.labels.push(timestamp);
-          indoorData.datasets[0].data.push(data.Temperature);
-          indoorData.datasets[1].data.push(data.Humidity);
-          indoorData.datasets[2].data.push(data.UV);
-          chartIndoor.update();
-        }
-
-        // Lưu dữ liệu vào mảng
-        dataLog.push({ Thời_gian: timestamp, ...data });
-      } catch (error) {
-        console.error("Lỗi khi lấy dữ liệu từ server:", error);
       }
     }
+  });
 
-    // Gọi hàm fetchData mỗi 30 giây
-    setInterval(fetchData, 30000);
-
-    function downloadExcel() {
-      if (dataLog.length === 0) {
-        alert("Không có dữ liệu để tải xuống!");
-        return;
+  // Tạo biểu đồ Indoor
+  var ctxIndoor = document.getElementById("chartIndoor").getContext("2d");
+  var chartIndoor = new Chart(ctxIndoor, {
+    type: "line",
+    data: indoorData,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          type: "category",
+          ticks: { autoSkip: false }
+        },
+        y: {
+          min: 0,
+          max: 100,
+          ticks: { stepSize: 10 }
+        }
       }
-
-      // Tạo một workbook và worksheet
-      var wb = XLSX.utils.book_new();
-      var ws = XLSX.utils.json_to_sheet(dataLog);
-
-      // Thêm worksheet vào workbook
-      XLSX.utils.book_append_sheet(wb, ws, "Dữ liệu cảm biến");
-
-      // Xuất file Excel
-      XLSX.writeFile(wb, "Du_lieu_cam_bien.xlsx");
     }
-  </script>
+  });
+
+  // Hàm lấy cả dữ liệu outdoor và indoor
+  async function fetchAllData() {
+    const timestamp = new Date().toISOString();
+
+    // --- Outdoor ---
+    try {
+      const res1 = await fetch("https://datn-8k1d.onrender.com/data?type=outdoor");
+      const data1 = await res1.json();
+
+      document.getElementById("temp1").innerText = data1.Temperature;
+      document.getElementById("pm1").innerText = data1.PM1;
+      document.getElementById("pm2_5").innerText = data1["PM2.5"];
+      document.getElementById("pm10").innerText = data1.PM10;
+
+      outdoorData.labels.push(timestamp);
+      outdoorData.datasets[0].data.push(data1.Temperature);
+      outdoorData.datasets[1].data.push(data1.PM1);
+      outdoorData.datasets[2].data.push(data1["PM2.5"]);
+      outdoorData.datasets[3].data.push(data1.PM10);
+      chartOutdoor.update();
+
+      dataLog.push({ Thời_gian: timestamp, ID: "ID1", ...data1 });
+    } catch (err) {
+      console.error("Lỗi khi lấy dữ liệu outdoor:", err);
+    }
+
+    // --- Indoor ---
+    try {
+      const res2 = await fetch("https://datn-8k1d.onrender.com/data?type=indoor");
+      const data2 = await res2.json();
+
+      document.getElementById("temp2").innerText = data2.Temperature;
+      document.getElementById("hum2").innerText = data2.Humidity;
+      document.getElementById("uv").innerText = data2.UV;
+
+      indoorData.labels.push(timestamp);
+      indoorData.datasets[0].data.push(data2.Temperature);
+      indoorData.datasets[1].data.push(data2.Humidity);
+      indoorData.datasets[2].data.push(data2.UV);
+      chartIndoor.update();
+
+      dataLog.push({ Thời_gian: timestamp, ID: "ID2", ...data2 });
+    } catch (err) {
+      console.error("Lỗi khi lấy dữ liệu indoor:", err);
+    }
+  }
+
+  // Gọi hàm mỗi 30 giây
+  setInterval(fetchAllData, 30000);
+  fetchAllData(); // gọi lần đầu ngay khi tải trang
+
+  // Tải file Excel
+  function downloadExcel() {
+    if (dataLog.length === 0) {
+      alert("Không có dữ liệu để tải xuống!");
+      return;
+    }
+
+    var wb = XLSX.utils.book_new();
+    var ws = XLSX.utils.json_to_sheet(dataLog);
+    XLSX.utils.book_append_sheet(wb, ws, "Dữ liệu cảm biến");
+    XLSX.writeFile(wb, "Du_lieu_cam_bien.xlsx");
+  }
+</script>
+
 </body>
 </html>
