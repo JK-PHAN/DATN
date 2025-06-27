@@ -172,45 +172,48 @@
     // Hàm lấy dữ liệu từ server qua HTTP
     async function fetchData() {
       try {
-        const response = await fetch("https://datn-8k1d.onrender.com/data"); // Thay bằng địa chỉ server của bạn
-        const data = await response.json();
-        const timestamp = new Date().toLocaleTimeString();
+        // Lấy gói dữ liệu lần 1
+        let response1 = await fetch("https://datn-8k1d.onrender.com/data");
+        let data1 = await response1.json();
+        processData(data1);
 
-        if (data.ID === "ID1") {
-          document.getElementById("temp1").innerText = data.Temperature;
-          document.getElementById("pm1").innerText = data.PM1;
-          document.getElementById("pm2_5").innerText = data["PM2.5"];
-          document.getElementById("pm10").innerText = data.PM10;
-
-          // Cập nhật biểu đồ Outdoor
-          outdoorData.labels.push(timestamp);
-          outdoorData.datasets[0].data.push(data.Temperature);
-          outdoorData.datasets[1].data.push(data.PM1);
-          outdoorData.datasets[2].data.push(data["PM2.5"]);
-          outdoorData.datasets[3].data.push(data.PM10);
-          chartOutdoor.update();
-        } else if (data.ID === "ID2") {
-          document.getElementById("temp2").innerText = data.Temperature;
-          document.getElementById("hum2").innerText = data.Humidity;
-          document.getElementById("uv").innerText = data.UV;
-
-          // Cập nhật biểu đồ Indoor
-          indoorData.labels.push(timestamp);
-          indoorData.datasets[0].data.push(data.Temperature);
-          indoorData.datasets[1].data.push(data.Humidity);
-          indoorData.datasets[2].data.push(data.UV);
-          chartIndoor.update();
-        }
-
-        // Lưu dữ liệu vào mảng
-        dataLog.push({ Thời_gian: timestamp, ...data });
+        // Lấy gói dữ liệu lần 2
+        let response2 = await fetch("https://datn-8k1d.onrender.com/data");
+        let data2 = await response2.json();
+        processData(data2);
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu từ server:", error);
       }
     }
 
-    // Gọi hàm fetchData mỗi 30 giây
-    setInterval(fetchData, 30000);
+    function processData(data) {
+      const timestamp = new Date().toLocaleTimeString();
+      if (data.ID === "ID1") {
+        document.getElementById("temp1").innerText = data.Temperature;
+        document.getElementById("pm1").innerText = data.PM1;
+        document.getElementById("pm2_5").innerText = data["PM2.5"];
+        document.getElementById("pm10").innerText = data.PM10;
+        outdoorData.labels.push(timestamp);
+        outdoorData.datasets[0].data.push(data.Temperature);
+        outdoorData.datasets[1].data.push(data.PM1);
+        outdoorData.datasets[2].data.push(data["PM2.5"]);
+        outdoorData.datasets[3].data.push(data.PM10);
+        chartOutdoor.update();
+      } else if (data.ID === "ID2") {
+        document.getElementById("temp2").innerText = data.Temperature;
+        document.getElementById("hum2").innerText = data.Humidity;
+        document.getElementById("uv").innerText = data.UV;
+        indoorData.labels.push(timestamp);
+        indoorData.datasets[0].data.push(data.Temperature);
+        indoorData.datasets[1].data.push(data.Humidity);
+        indoorData.datasets[2].data.push(data.UV);
+        chartIndoor.update();
+      }
+      dataLog.push({ Thời_gian: timestamp, ...data });
+    }
+
+    // Gọi hàm fetchData mỗi 10 giây
+    setInterval(fetchData, 10000);
 
     function downloadExcel() {
       if (dataLog.length === 0) {
