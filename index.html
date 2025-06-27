@@ -169,7 +169,7 @@
       }
     });
 
-    // Hàm lấy dữ liệu từ server cho ID1
+    // Hàm lấy dữ liệu từ server cho ID1:  OUTDOOR
     async function fetchID1() {
       try {
         let response = await fetch("https://datn-8k1d.onrender.com/data");
@@ -180,7 +180,7 @@
       }
     }
 
-    // Hàm lấy dữ liệu từ server cho ID2
+    // Hàm lấy dữ liệu từ server cho ID2: INDOOR
     async function fetchID2() {
       try {
         let response = await fetch("https://datn-8k1d.onrender.com/data");
@@ -191,9 +191,9 @@
       }
     }
 
-    // Gọi fetchID1 mỗi 30 giây, fetchID2 mỗi 40 giây
-    setInterval(fetchID1, 30000);
-    setInterval(fetchID2, 40000);
+    // Gọi fetchID1 mỗi 40 giây, fetchID2 mỗi 30 giây
+    setInterval(fetchID1, 40000);
+    setInterval(fetchID2, 30000);
 
     function processData(data) {
       const timestamp = new Date().toLocaleTimeString(); // Lấy thời gian hiện tại
