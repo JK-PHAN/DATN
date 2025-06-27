@@ -169,25 +169,34 @@
       }
     });
 
-    // Hàm lấy dữ liệu từ server qua HTTP
-    async function fetchData() {
+    // Hàm lấy dữ liệu từ server cho ID1
+    async function fetchID1() {
       try {
-        // Lấy gói dữ liệu lần 1
-        let response1 = await fetch("https://datn-8k1d.onrender.com/data");
-        let data1 = await response1.json();
-        processData(data1);
-
-        // Lấy gói dữ liệu lần 2
-    /*    let response2 = await fetch("https://datn-8k1d.onrender.com/data");
-        let data2 = await response2.json();
-        processData(data2);*/
+        let response = await fetch("https://datn-8k1d.onrender.com/data");
+        let data = await response.json();
+        if (data.ID === "ID1") processData(data);
       } catch (error) {
-        console.error("Lỗi khi lấy dữ liệu từ server:", error);
+        console.error("Lỗi khi lấy dữ liệu ID1 từ server:", error);
       }
     }
 
+    // Hàm lấy dữ liệu từ server cho ID2
+    async function fetchID2() {
+      try {
+        let response = await fetch("https://datn-8k1d.onrender.com/data");
+        let data = await response.json();
+        if (data.ID === "ID2") processData(data);
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu ID2 từ server:", error);
+      }
+    }
+
+    // Gọi fetchID1 mỗi 30 giây, fetchID2 mỗi 40 giây
+    setInterval(fetchID1, 30000);
+    setInterval(fetchID2, 40000);
+
     function processData(data) {
-      const timestamp = new Date().toLocaleTimeString();
+      const timestamp = new Date().toLocaleTimeString(); // Lấy thời gian hiện tại
       if (data.ID === "ID1") {
         document.getElementById("temp1").innerText = data.Temperature;
         document.getElementById("pm1").innerText = data.PM1;
@@ -211,9 +220,6 @@
       }
       dataLog.push({ Thời_gian: timestamp, ...data });
     }
-
-    // Gọi hàm fetchData mỗi 20 giây
-    setInterval(fetchData, 20000);
 
     function downloadExcel() {
       if (dataLog.length === 0) {
