@@ -212,8 +212,8 @@
       dataLog.push({ Thời_gian: timestamp, ...data });
     }
 
-    // Gọi hàm fetchData mỗi 10 giây
-    setInterval(fetchData, 10000);
+    // Gọi hàm fetchData mỗi 20 giây
+    setInterval(fetchData, 20000);
 
     function downloadExcel() {
       if (dataLog.length === 0) {
