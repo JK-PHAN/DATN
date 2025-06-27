@@ -175,8 +175,8 @@
         const response = await fetch("https://datn-8k1d.onrender.com/data"); // Thay bằng địa chỉ server của bạn
         const data = await response.json();
         const timestamp = new Date().toLocaleTimeString();
-
-        if (data.ID === "ID1") {
+        // Xử lý dữ liệu OUTDOOR (ID1)
+        if (data.outdoor) {
           document.getElementById("temp1").innerText = data.Temperature;
           document.getElementById("pm1").innerText = data.PM1;
           document.getElementById("pm2_5").innerText = data["PM2.5"];
@@ -189,7 +189,8 @@
           outdoorData.datasets[2].data.push(data["PM2.5"]);
           outdoorData.datasets[3].data.push(data.PM10);
           chartOutdoor.update();
-        } else if (data.ID === "ID2") {
+          // Xử lý dữ liệu INDOOR (ID2)
+        } else if (data.indoor) {
           document.getElementById("temp2").innerText = data.Temperature;
           document.getElementById("hum2").innerText = data.Humidity;
           document.getElementById("uv").innerText = data.UV;
@@ -209,8 +210,8 @@
       }
     }
 
-    // Gọi hàm fetchData mỗi 30 giây
-    setInterval(fetchData, 30000);
+    // Gọi hàm fetchData mỗi 10 giây
+    setInterval(fetchData, 10000);
 
     function downloadExcel() {
       if (dataLog.length === 0) {
